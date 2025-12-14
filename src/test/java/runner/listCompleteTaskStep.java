@@ -1,64 +1,48 @@
-package listTasks;
+package runner;
 
+import context.ScenarioContext;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.android.AndroidDriver;
-import org.junit.jupiter.api.AfterEach;
+import io.cucumber.java.PendingException;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
-public class CompleteTaskTest {
+public class listCompleteTaskStep {
 
-    private AppiumDriver device;
+    private final AppiumDriver device;
 
-    @Test
-    public void listCompletedTasks() throws InterruptedException {
-
-        createListOfTasks();
-        WebDriverWait explicitWait = new WebDriverWait(device, Duration.ofSeconds(20));
-        explicitWait.until(ExpectedConditions.elementToBeClickable(By.id("com.vrproductiveapps.whendo:id/fab")));
-        swipeDownList();
-
-        List<WebElement> checkboxes = device.findElements(By.xpath("(//android.widget.ImageButton[@content-desc=\"Mark Done\"])"));
-
-        checkboxes.get(checkboxes.size()-1).click();
-
-        device.findElement(By.xpath("//android.widget.ImageButton[@content-desc=\"Open navigation drawer\"]")).click();
-
-        device.findElement(By.xpath("//android.widget.CheckedTextView[@text=\"Completed Tasks\"]")).click();
-
-        List<WebElement> completedTasks = device.findElements(By.
-                xpath("//android.widget.ListView[@resource-id=\"com.vrproductiveapps.whendo:id/notesList\"]/" +
-                        "android.view.ViewGroup[2]/android.widget.LinearLayout/android.widget.LinearLayout"));
-
-        Assertions.assertTrue(completedTasks.size() == 1, "Task was not marked and not completed");
+    public listCompleteTaskStep(ScenarioContext context) {
+        this.device = context.getDriver();
     }
 
-    private void createListOfTasks(){
+    @Given("que he creado una lista con {int} tareas")
+    public void queHeCreadoUnaListaConTareas(int countTasks) {
         int count = 0;
 
         //click +
         device.findElement(By.id("com.vrproductiveapps.whendo:id/fab")).click();
 
-        while (count < 12){
+        while (count < countTasks){
             String titulo = "AUTO" + System.currentTimeMillis();
             String note = "this is a note " + count;
             // type title
             device.findElement(By.id("com.vrproductiveapps.whendo:id/noteTextTitle")).sendKeys(titulo);
             // type notes
             device.findElement(By.id("com.vrproductiveapps.whendo:id/noteTextNotes")).sendKeys(note);
-            if (count == 11){
+            if (count == countTasks-1){
                 // click save
                 device.findElement(By.id("com.vrproductiveapps.whendo:id/saveItem")).click();
             }else{
@@ -69,7 +53,14 @@ public class CompleteTaskTest {
         }
     }
 
-    private void swipeDownList() throws InterruptedException {
+    @And("la lista de tareas esta visible en la pantalla")
+    public void laListaDeTareasEstaVisibleEnLaPantalla() {
+        WebDriverWait explicitWait = new WebDriverWait(device, Duration.ofSeconds(20));
+        explicitWait.until(ExpectedConditions.elementToBeClickable(By.id("com.vrproductiveapps.whendo:id/fab")));
+    }
+
+    @And("scrolleo al final de la lista")
+    public void scrolleoAlFinalDeLaLista() throws InterruptedException {
         Point firstPoint = device.findElement(By.xpath("//android.widget.ListView[@resource-id=\"com.vrproductiveapps.whendo:id/notesList\"]/android.view.ViewGroup[1]")).getLocation();
         Point lastPoint = device.findElement(By.xpath("//android.widget.ListView[@resource-id=\"com.vrproductiveapps.whendo:id/notesList\"]/android.view.ViewGroup[last()]")).getLocation();
 
@@ -96,5 +87,27 @@ public class CompleteTaskTest {
 
         device.perform(Arrays.asList(swipeAction));
         Thread.sleep(5000);
+    }
+
+    @When("marco la ultima tarea creada como completada")
+    public void marcoLaUltimaTareaCreadaComoCompletada() {
+        List<WebElement> checkboxes = device.findElements(By.xpath("(//android.widget.ImageButton[@content-desc=\"Mark Done\"])"));
+        checkboxes.get(checkboxes.size()-1).click();
+    }
+
+    @And("accedo a la seccion {string}")
+    public void accedoALaSeccion(String menuOptionName) {
+        device.findElement(By.xpath("//android.widget.ImageButton[@content-desc=\"Open navigation drawer\"]")).click();
+
+        device.findElement(By.xpath("//android.widget.CheckedTextView[@text=\"" + menuOptionName + "\"]")).click();
+    }
+
+    @Then("solo deberia ver una tarea en la lista de tareas completadas")
+    public void soloDeberiaVerUnaTareaEnLaListaDeTareasCompletadas() {
+        List<WebElement> completedTasks = device.findElements(By.
+                xpath("//android.widget.ListView[@resource-id=\"com.vrproductiveapps.whendo:id/notesList\"]/" +
+                        "android.view.ViewGroup[2]/android.widget.LinearLayout/android.widget.LinearLayout"));
+
+        Assertions.assertTrue(completedTasks.size() == 1, "Task was not marked and not completed");
     }
 }
