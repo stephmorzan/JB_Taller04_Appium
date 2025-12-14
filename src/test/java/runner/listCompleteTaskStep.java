@@ -1,8 +1,6 @@
 package runner;
 
-import context.ScenarioContext;
 import io.appium.java_client.AppiumDriver;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -24,8 +22,8 @@ public class listCompleteTaskStep {
 
     private final AppiumDriver device;
 
-    public listCompleteTaskStep(ScenarioContext context) {
-        this.device = context.getDriver();
+    public listCompleteTaskStep(Hooks hooks) {
+        this.device = hooks.getDriver();
     }
 
     @Given("que he creado una lista con {int} tareas")

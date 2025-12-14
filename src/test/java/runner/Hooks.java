@@ -1,6 +1,5 @@
 package runner;
 
-import context.ScenarioContext;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.cucumber.java.After;
@@ -13,12 +12,7 @@ import java.time.Duration;
 
 public class Hooks {
 
-    private final ScenarioContext context;
-
-    // PicoContainer automáticamente crea e inyecta la instancia de ScenarioContext
-    public Hooks(ScenarioContext context) {
-        this.context = context;
-    }
+    private AppiumDriver device;
 
     @Before
     public void beforeScenario() throws MalformedURLException {
@@ -31,17 +25,19 @@ public class Hooks {
         capabilities.setCapability("platformName","Android");
         capabilities.setCapability("appium:automationName","uiautomator2");
 
-        AppiumDriver device = new AndroidDriver(new URL("http://127.0.0.1:4723/"), capabilities);
+        device = new AndroidDriver(new URL("http://127.0.0.1:4723/"), capabilities);
 
         device.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 
-        context.setDriver(device);
     }
 
     @After
     public void afterScenario() {
         System.out.println("---Scenario ends---");
-        AppiumDriver device = context.getDriver();
         device.quit();
+    }
+
+    public AppiumDriver getDriver() {
+        return device;
     }
 }
