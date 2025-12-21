@@ -5,6 +5,7 @@ Feature: List Tasks
     And la lista de tareas esta visible en la pantalla
     And scrolleo al final de la lista
 
+    @Taller04
   Scenario: Verificar la Tarea Marcada en la Lista de Completadas
     When marco la ultima tarea creada como completada
     And accedo a la seccion "Completed Tasks"

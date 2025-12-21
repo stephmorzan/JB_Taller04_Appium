@@ -26,6 +26,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.cucumber/cucumber-picocontainer
     implementation 'io.cucumber:cucumber-picocontainer:7.33.0'
+
+    // https://mvnrepository.com/artifact/net.masterthought/cucumber-reporting
+    implementation group: 'net.masterthought', name: 'cucumber-reporting', version: '5.10.1'
 }
 
 test {
@@ -50,6 +53,7 @@ task cucumber() {
             args = [
                     '--plugin', 'pretty',
                     '--plugin', 'html:target/cucumber-report.html',
+                    '--plugin', 'json:target/report.json',
                     '--glue', 'runner', // paquete donde estan los step definitions
                     'src/test/resources', // donde estan los feature files
                     '--tags' ] + [testSuite]
