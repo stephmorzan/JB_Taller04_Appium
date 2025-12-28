@@ -15,13 +15,13 @@ import session.Session;
 import java.time.Duration;
 import java.util.List;
 
-public class listCompleteTaskStep {
+public class ListCompleteTaskStep {
 
     MyListScreen myListScreen = new MyListScreen();
     TaskDetailScreen taskDetailScreen = new TaskDetailScreen();
     CompletedTasksListScreen completedTasksListScreen = new CompletedTasksListScreen();
 
-    public listCompleteTaskStep() {
+    public ListCompleteTaskStep() {
     }
 
     @Given("que he creado una lista con {int} tareas")
