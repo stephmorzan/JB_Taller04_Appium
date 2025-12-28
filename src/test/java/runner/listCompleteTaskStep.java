@@ -3,8 +3,6 @@ package runner;
 import activities.whenDo.CompletedTasksListScreen;
 import activities.whenDo.MyListScreen;
 import activities.whenDo.TaskDetailScreen;
-import control.Checkbox;
-import io.appium.java_client.AppiumDriver;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -15,7 +13,6 @@ import org.openqa.selenium.interactions.Sequence;
 import session.Session;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 
 public class listCompleteTaskStep {
@@ -24,10 +21,7 @@ public class listCompleteTaskStep {
     TaskDetailScreen taskDetailScreen = new TaskDetailScreen();
     CompletedTasksListScreen completedTasksListScreen = new CompletedTasksListScreen();
 
-    private final AppiumDriver device;
-
-    public listCompleteTaskStep(Hooks hooks) {
-        this.device = hooks.getDriver();
+    public listCompleteTaskStep() {
     }
 
     @Given("que he creado una lista con {int} tareas")
@@ -72,7 +66,7 @@ public class listCompleteTaskStep {
     public void laListaDeTareasEstaVisibleEnLaPantalla() {
 //        WebDriverWait explicitWait = new WebDriverWait(device, Duration.ofSeconds(20));
 //        explicitWait.until(ExpectedConditions.elementToBeClickable(By.id("com.vrproductiveapps.whendo:id/fab")));
-        //myListScreen.addTaskButton.waitToBeClickable();
+        myListScreen.addTaskButton.waitToBeClickable();
     }
 
     @And("scrolleo al final de la lista")
@@ -110,16 +104,16 @@ public class listCompleteTaskStep {
         swipeAction.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
         //device.perform(Arrays.asList(swipeAction));
-        Session.getInstance().getDevice().perform(Arrays.asList(swipeAction));
+        Session.getInstance().getDevice().perform(List.of(swipeAction));
         Thread.sleep(5000);
     }
 
     @When("marco la ultima tarea creada como completada")
     public void marcoLaUltimaTareaCreadaComoCompletada() {
         //List<WebElement> checkboxes = device.findElements(By.xpath("(//android.widget.ImageButton[@content-desc=\"Mark Done\"])"));
-        List<Checkbox> checkboxes = myListScreen.checkboxList.getCheckboxes();
-        myListScreen.checkboxList.getLastCheckbox(checkboxes).click();
-
+        //List<Checkbox> checkboxes = myListScreen.checkboxList.getCheckboxes();
+        //myListScreen.checkboxList.getLastCheckbox(checkboxes).click();
+        myListScreen.checkboxList.getLastControl().click();
     }
 
     @And("accedo a la seccion {string}")
@@ -139,7 +133,6 @@ public class listCompleteTaskStep {
 //
 //        Assertions.assertTrue(completedTasks.size() == 1, "Task was not marked and not completed");
 
-        Assertions.assertTrue(completedTasksListScreen.checkboxList.getCheckboxes().size() == 1,
-                "Task was not marked and not completed");
+        Assertions.assertEquals(1, completedTasksListScreen.checkboxList.getCheckboxes().size(), "Task was not marked and not completed");
     }
 }

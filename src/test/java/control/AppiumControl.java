@@ -13,6 +13,7 @@ public class AppiumControl {
     protected By locator;
     protected WebElement control;
     protected WebDriverWait explicitWait;
+    protected List<WebElement> controls;
 
     public AppiumControl(By locator){
         this.locator = locator;
@@ -27,8 +28,13 @@ public class AppiumControl {
         control.click();
     }
 
-    public List<WebElement> findControls() {
-        return Session.getInstance().getDevice().findElements(locator);
+    public void findControls() {
+        controls = Session.getInstance().getDevice().findElements(this.locator);
+    }
+
+    public WebElement getLastControl(){
+        findControls();
+        return controls.get(controls.size()-1);
     }
 
     public boolean isControlDisplayed(){
